@@ -1,0 +1,6 @@
+name = Product Module
+description = This module is build for Itonics Interview By Babin Rana
+core = 7.x
+php = 5.3
+version = 7.x-0.1
+dependencies[] = wysiwyg

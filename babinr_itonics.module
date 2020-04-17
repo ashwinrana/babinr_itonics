@@ -1,0 +1,137 @@
+<?php
+
+const ROUTE_PREFIX = 'product';
+const TABLE_NAME = 'babinr_itonics_product';
+
+include __DIR__ . '/form/create_form.php';
+include  __DIR__ . '/form/edit_form.php';
+
+/**
+ * @file
+ * babinr_itonics.module
+ */
+
+/**
+ * @return array
+ *
+ * implement permissions.
+ */
+function babinr_itonics_permission()
+{
+  return [
+    'manage product' => [
+      'title' => t('Manage Products'),
+      'description' => t('Perform administration task for Product')
+    ]
+  ];
+}
+
+function babinr_itonics_menu()
+{
+  $items[ROUTE_PREFIX . '/index'] = [
+    'title' => t('Products Listing Page'),
+    'page callback' => 'babinr_itonics_products_index_view',
+    'access arguments' => [
+      'manage product',
+    ],
+    'type' => MENU_NORMAL_ITEM,
+  ];
+
+  $items[ROUTE_PREFIX . '/create'] = [
+    'title' => t('Create New Product'),
+    'page callback' => 'drupal_get_form',
+    'page arguments' => [
+      'babinr_itonics_products_create_form'
+    ],
+    'access arguments' => [
+      'manage product',
+    ],
+    'type' => MENU_NORMAL_ITEM,
+  ];
+
+  $items[ROUTE_PREFIX . '/%'] = [
+    'title' => t('Product Detail'),
+    'page callback' => 'babinr_itonics_product_show',
+    'page arguments' => [1],
+    'access arguments' => [
+      'manage product',
+    ]
+  ];
+
+  $items[ ROUTE_PREFIX . '/%/edit'] = [
+    'title' => t('Edit Product Detail'),
+    'page callback' => 'drupal_get_form',
+    'page arguments' => ['babinr_itonics_products_edit_form', 1],
+    'access arguments' => [
+      'manage product',
+    ]
+  ];
+
+  $items[ROUTE_PREFIX . '/%/delete'] = [
+    'title' => 'Delete Product',
+    'page callback' => 'babinr_itonics_product_delete',
+    'page arguments' => [1],
+    'access arguments' => [
+      'manage product',
+    ],
+  ];
+
+  return $items;
+}
+
+function babinr_itonics_products_index_view()
+{
+  global $base_url;
+
+  $results = db_query('SELECT * FROM { ' . TABLE_NAME . '}');
+
+  $headers = [t('ID'), t('Title'), t('Category'), t('Type'), t('Email'), t('Expiry Date'), t('Option')];
+
+  $rows = [];
+
+  foreach ($results as $result) {
+    $rows[] = [
+      check_plain($result->id),
+      check_plain($result->title),
+      check_plain($result->category),
+      check_plain($result->type),
+      check_plain($result->owner_email),
+      check_plain($result->expiry_date),
+      '<a href="' . $base_url . '/' . ROUTE_PREFIX . '/' . $result->id . '/edit">Edit</a> &nbsp; <a href="' . $base_url . '/' . ROUTE_PREFIX . '/' . $result->id . '/delete">Delete</a>'
+    ];
+  }
+
+  return theme('babinr_itonics_products_index', compact('headers', 'rows'));
+}
+
+function babinr_itonics_product_delete($product_id)
+{
+  $result = db_select(TABLE_NAME)->fields(TABLE_NAME)->condition('id', $product_id)->execute()->fetchAssoc('id');
+  if (count($result) > 0) {
+    $delete = db_delete(TABLE_NAME)->condition('id', $product_id)->execute();
+  }
+  return babinr_itonics_products_index_view();
+}
+
+function babinr_itonics_product_show($product_id)
+{
+  $result = db_select(TABLE_NAME)->fields(TABLE_NAME)->condition('id', $product_id)->execute()->fetchAssoc('id');
+  if(count($result) > 0) {
+    return theme('babinr_itonics_product_detail', compact('result'));
+  }
+}
+
+function babinr_itonics_theme()
+{
+  $theme['babinr_itonics_products_index'] = [
+    'template' => 'babinr_itonics_products_index',
+    'path' => drupal_get_path('module', 'babinr_itonics') . '/view/'
+  ];
+
+  $theme['babinr_itonics_product_detail'] = [
+    'template' => 'babinr_itonics_product_detail',
+    'path' => drupal_get_path('module', 'babinr_itonics') . '/view/'
+  ];
+
+  return $theme;
+}

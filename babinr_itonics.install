@@ -1,0 +1,74 @@
+<?php
+
+/**
+ * Implements hook_schema().
+ */
+function babinr_itonics_schema()
+{
+  $schema['babinr_itonics_product'] = [
+    'description' => 'Table for storing Product info',
+    'fields' => [
+      'id' => [
+        'description' => 'ID of the Product',
+        'type' => 'serial',
+        'not null' => true,
+        'unsigned' => true,
+      ],
+      'title' => [
+        'description' => 'Title of the Product',
+        'type' => 'varchar',
+        'length' => 191,
+        'not null' => TRUE,
+        'default' => '',
+      ],
+      'image' => [
+        'description' => 'Image of the Product',
+        'type' => 'varchar',
+        'length' => 255,
+        'not null' => FALSE,
+      ],
+      'summary' => [
+        'description' => 'Summary of the Product',
+        'type' => 'text',
+        'size' => 'normal',
+        'not null' => FALSE,
+      ],
+      'description' => [
+        'description' => 'Description of the Product',
+        'type' => 'text',
+        'size' => 'big',
+        'not null' => FALSE,
+      ],
+      'category' => [
+        'description' => 'Categories for the Product',
+        'type' => 'varchar',
+        'length' => 255,
+        'not null' => TRUE,
+        'default' => '',
+      ],
+      'type' => [
+        'description' => 'Type of the Product',
+        'type' => 'varchar',
+        'length' => 255,
+        'not null' => TRUE,
+        'default' => '',
+      ],
+      'owner_email' => [
+        'description' => 'Owner Email of the Product',
+        'type' => 'varchar',
+        'length' => 191,
+        'not null' => TRUE,
+        'default' => '',
+      ],
+      'expiry_date' => [
+        'description' => 'Product Expire Date',
+        'type' => 'varchar',
+        'length' => 191,
+        'not null' => FALSE,
+      ],
+    ],
+    'primary key' => ['id'],
+  ];
+
+  return $schema;
+}
