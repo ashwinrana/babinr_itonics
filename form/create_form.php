@@ -10,10 +10,6 @@ function babinr_itonics_products_create_form($form, &$form_state)
       '#maxlength' => 191,
       '#required' => TRUE,
     ],
-    'image' => [
-      '#type' => 'file',
-      '#title' => t('Product Image'),
-    ],
     'summary' => [
       '#type' => 'textarea',
       '#title' => 'Product Summary',
@@ -79,7 +75,7 @@ function babinr_itonics_create_from_email_validate($element, &$form_state, $form
   }
 }
 
-function babinr_itonics_products_form_submit($form, &$form_state)
+function babinr_itonics_products_create_form_submit($form, &$form_state)
 {
   $data = $form_state['input'];
   db_insert(TABLE_NAME)
